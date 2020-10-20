@@ -17,9 +17,10 @@ public class GetProductsServlet extends AbstractDatabaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        execute(response, databaseRequest::queryGetProduct, databaseRequest::toHtml, null);
+        responseHandler.reset(response);
 
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
+        execute(databaseRequest::queryGetProduct, databaseRequest::toHtml, null);
+
+        responseHandler.flush(HttpServletResponse.SC_OK, true);
     }
 }

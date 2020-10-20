@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+
 /**
  * @author akirakozov
  */
@@ -16,28 +18,28 @@ public class QueryServlet extends AbstractDatabaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String command = request.getParameter("command");
+        responseHandler.reset(response);
 
+        String command = request.getParameter("command");
         switch (command) {
             case "max":
-                execute(response, databaseRequest::queryMaxProduct, databaseRequest::toHtml, "<h1>Product with max price: </h1>");
+                execute(databaseRequest::queryMaxProduct, databaseRequest::toHtml, "<h1>Product with max price: </h1>");
                 break;
             case "min":
-                execute(response, databaseRequest::queryMinProduct, databaseRequest::toHtml, "<h1>Product with min price: </h1>");
+                execute(databaseRequest::queryMinProduct, databaseRequest::toHtml, "<h1>Product with min price: </h1>");
                 break;
             case "sum":
-                execute(response, databaseRequest::querySumProduct, databaseRequest::toHtml, "Summary price: ");
+                execute(databaseRequest::querySumProduct, databaseRequest::toHtml, "Summary price: ");
                 break;
             case "count":
-                execute(response, databaseRequest::queryCountProduct, databaseRequest::toHtml, "Number of products: ");
+                execute(databaseRequest::queryCountProduct, databaseRequest::toHtml, "Number of products: ");
                 break;
             default:
                 response.getWriter().println("Unknown command: " + command);
                 break;
         }
 
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
+        responseHandler.flush(SC_OK, true);
     }
 
 }

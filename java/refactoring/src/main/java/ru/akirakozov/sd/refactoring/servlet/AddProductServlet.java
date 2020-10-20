@@ -18,12 +18,13 @@ public class AddProductServlet extends AbstractDatabaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        responseHandler.reset(response);
+
         var product = Product.fromRequest(request);
 
         databaseRequest.updateAddProduct(product);
 
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_CREATED);
-        response.getWriter().println("OK");
+        responseHandler.writeln("OK");
+        responseHandler.flush(HttpServletResponse.SC_CREATED, false);
     }
 }
