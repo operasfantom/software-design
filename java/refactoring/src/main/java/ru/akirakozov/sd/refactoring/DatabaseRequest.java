@@ -11,6 +11,7 @@ public class DatabaseRequest {
             " NAME           TEXT    NOT NULL, " +
             " PRICE          INT     NOT NULL)";
     private static final String DB_ERROR = "Database access error";
+    public static final String DROP_TABLE = "DROP TABLE IF EXISTS PRODUCT";
 
     private final String databaseName;
 
@@ -30,5 +31,9 @@ public class DatabaseRequest {
 
     public void createDatabase() {
         executeUpdate(CREATE_DATABASE);
+    }
+
+    public void dropDatabase() {
+        executeUpdate(DROP_TABLE);
     }
 }

@@ -36,7 +36,7 @@ public class AddProductServlet extends AbstractDatabaseServlet {
         }
 
         response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(HttpServletResponse.SC_CREATED);
         response.getWriter().println("OK");
     }
 }

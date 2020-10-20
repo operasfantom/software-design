@@ -1,6 +1,7 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.DatabaseRequest;
+import ru.akirakozov.sd.refactoring.Product;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,9 +32,8 @@ public class QueryServlet extends AbstractDatabaseServlet {
                     response.getWriter().println("<h1>Product with max price: </h1>");
 
                     while (rs.next()) {
-                        String  name = rs.getString("name");
-                        int price  = rs.getInt("price");
-                        response.getWriter().println(name + "\t" + price + "</br>");
+                        var product = Product.fromResultSet(rs);
+                        response.getWriter().println(product.getName() + "\t" + product.getPrice() + "</br>");
                     }
                     response.getWriter().println("</body></html>");
 

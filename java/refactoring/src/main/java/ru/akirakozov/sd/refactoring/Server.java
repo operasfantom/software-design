@@ -14,8 +14,8 @@ public class Server {
     private final DatabaseRequest databaseRequest;
     private final ServletContextHandler context;
 
-    public Server(int port) {
-        this.databaseRequest = new DatabaseRequest();
+    public Server(int port, DatabaseRequest databaseRequest) {
+        this.databaseRequest = databaseRequest;
         this.server = new org.eclipse.jetty.server.Server(port);
         this.context = new ServletContextHandler(ServletContextHandler.SESSIONS);
     }
@@ -24,7 +24,7 @@ public class Server {
         assert args != null : "args are null";
         assert args.length == 1 : "args length is wrong:" + args.length;
         int port = Integer.parseInt(args[0]);
-        Server server = new Server(port);
+        Server server = new Server(port, new DatabaseRequest());
         server.start();
         server.join();
     }
@@ -41,5 +41,9 @@ public class Server {
 
     public void join() throws InterruptedException {
         server.join();
+    }
+
+    public void stop() throws Exception {
+        server.stop();
     }
 }

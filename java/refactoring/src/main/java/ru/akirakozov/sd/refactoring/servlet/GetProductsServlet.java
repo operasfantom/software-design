@@ -1,10 +1,10 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.DatabaseRequest;
+import ru.akirakozov.sd.refactoring.Product;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -20,7 +20,7 @@ public class GetProductsServlet extends AbstractDatabaseServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
             try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
                 Statement stmt = c.createStatement();
@@ -28,9 +28,8 @@ public class GetProductsServlet extends AbstractDatabaseServlet {
                 response.getWriter().println("<html><body>");
 
                 while (rs.next()) {
-                    String  name = rs.getString("name");
-                    int price  = rs.getInt("price");
-                    response.getWriter().println(name + "\t" + price + "</br>");
+                    var product = Product.fromResultSet(rs);
+                    response.getWriter().println(product.getName() + "\t" + product.getPrice() + "</br>");
                 }
                 response.getWriter().println("</body></html>");
 
