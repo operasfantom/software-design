@@ -6,38 +6,18 @@ import ru.akirakozov.sd.refactoring.servlet.AddProductServlet;
 import ru.akirakozov.sd.refactoring.servlet.GetProductsServlet;
 import ru.akirakozov.sd.refactoring.servlet.QueryServlet;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 /**
  * @author akirakozov
  */
 public class Server {
     private final org.eclipse.jetty.server.Server server;
+    private final DatabaseRequest databaseRequest;
+    private final ServletContextHandler context;
 
-    public Server(int port) throws SQLException {
-        try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-            String sql = "CREATE TABLE IF NOT EXISTS PRODUCT" +
-                    "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    " NAME           TEXT    NOT NULL, " +
-                    " PRICE          INT     NOT NULL)";
-            Statement stmt = c.createStatement();
-
-            stmt.executeUpdate(sql);
-            stmt.close();
-        }
-
-        server = new org.eclipse.jetty.server.Server(port);
-
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
-        server.setHandler(context);
-
-        context.addServlet(new ServletHolder(new AddProductServlet()), "/add-product");
-        context.addServlet(new ServletHolder(new GetProductsServlet()), "/get-products");
-        context.addServlet(new ServletHolder(new QueryServlet()), "/query");
+    public Server(int port) {
+        this.databaseRequest = new DatabaseRequest();
+        this.server = new org.eclipse.jetty.server.Server(port);
+        this.context = new ServletContextHandler(ServletContextHandler.SESSIONS);
     }
 
     public static void main(String[] args) throws Exception {
@@ -50,6 +30,12 @@ public class Server {
     }
 
     public void start() throws Exception {
+        databaseRequest.createDatabase();
+        context.setContextPath("/");
+        server.setHandler(context);
+        context.addServlet(new ServletHolder(new AddProductServlet(databaseRequest)), "/add-product");
+        context.addServlet(new ServletHolder(new GetProductsServlet(databaseRequest)), "/get-products");
+        context.addServlet(new ServletHolder(new QueryServlet(databaseRequest)), "/query");
         server.start();
     }
 
