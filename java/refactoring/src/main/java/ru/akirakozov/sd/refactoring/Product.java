@@ -9,7 +9,6 @@ public class Product {
     private final long price;
 
     public Product(String name, long price) {
-
         this.name = name;
         this.price = price;
     }
